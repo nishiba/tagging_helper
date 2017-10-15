@@ -35,7 +35,7 @@ def _get_next_file_id(file_id: str):
     if file_id not in file_ids:
         return None
 
-    index = file_id.index(file_id) + 1
+    index = file_ids.index(file_id) + 1
     if index >= len(file_ids):
         return None
 
