@@ -5,7 +5,10 @@ from glob import glob
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
 
+from engine.crf_helper import train
+from engine.crf_helper import predict
 from tagging_helper.settings import BASE_DIR
+from django.shortcuts import redirect
 
 
 def _get_texts(file_id: str):
@@ -58,7 +61,10 @@ def _save_result(file_id: str, result: str):
 
 def raw_data_list(request):
     ids = _get_file_ids()
-    return render(request, 'app/raw_data_list.html', {'file_paths': ids})
+    params = request.GET
+    # message = params['message'] if 'message' in params else ''
+    message = ""
+    return render(request, 'app/raw_data_list.html', {'file_paths': ids, 'message': message})
 
 
 def _show_annotation(request, file_id: str):
@@ -80,3 +86,23 @@ def save_and_next(request: WSGIRequest):
     _save_result(file_id, text)
     next_file_id = _get_next_file_id(file_id)
     return _show_annotation(request, next_file_id)
+
+
+def train_model(request: WSGIRequest):
+    texts = []
+    for path in glob('%s/app/data/annotated_data/*.txt' % BASE_DIR):
+        with open(path, 'r') as f:
+            texts += f.readlines()
+    train(texts)
+    return redirect('raw_data_list')
+
+
+def apply_model(request: WSGIRequest):
+    for path in glob('%s/app/data/raw_data/*.txt' % BASE_DIR):
+        with open(path, 'r') as f:
+            texts = f.readlines()
+        annotated_texts = predict(texts)
+        with open(path, 'w') as f:
+            f.write('\n'.join(annotated_texts))
+    return redirect('raw_data_list')
+
