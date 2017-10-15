@@ -1,0 +1,12 @@
+<html>
+<head>
+</head>
+<body>
+Raw Data List<br>
+    <ul>
+        {% for file_path in file_paths %}
+        <li><a href="annotation.html?id={{ file_path }}">{{ file_path }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+{% load staticfiles %}
+<html lang="jp">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static './css/hello.css' %}" />
+    <script type="text/javascript", src="{% static 'scripts/hello.js' %}"></script>
+</head>
+<body>
+    <a href="./">list</a> > {{ id }}
+    <br>
+    <br>
+    <div id="test">
+        {% for text in texts%}
+            {{text|safe}}<br>
+        {% endfor %}
+    </div>
+    <br><br>
+    <div id="contextmenu">
+    <ul>
+      <li><a href="javascript:addAnnotation('annotation1')">annotation1</a></li>
+      <li><a href="javascript:addAnnotation('annotation2')">annotation2</a></li>
+      <li><a href="javascript:addAnnotation('annotation3')">annotation3</a></li>
+      <li><a href="javascript:cancelAnnotation()">remove</a></li>
+    </ul>
+    </div>
+    <form action="./annotation.html" method="post">
+        {% csrf_token %}
+        <input type="submit" value="save & next">
+        <input type="text" name="id" value="{{ id }}" style="display:none;">
+        <br>
+        <textarea id='result' name="result" style="display:none;"></textarea>
+    </form>
+    <script type="text/javascript">saveText()</script>
+
+</body>
+</html>
